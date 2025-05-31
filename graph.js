@@ -1,6 +1,6 @@
 import { msalConfig, graphScopes } from "./authConfig.js";
 
-const msal = new msalBrowser.PublicClientApplication(msalConfig);
+const msal = new msal.PublicClientApplication(msalConfig);
 const account = () => msal.getAllAccounts()[0];
 
 document.getElementById("signin").onclick = async () => {
