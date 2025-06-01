@@ -3,7 +3,7 @@ name: Pages
 on:
   push:
     branches: [main]
-workflow_dispatch: # 👈 enables manual trigger
+workflow_dispatch:
  
 permissions:
   contents: read
