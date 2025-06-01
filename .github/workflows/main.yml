@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Angular PWA
         run: |
-          npx ng build --configuration production --base-href /rigersramushi.github.io/
+          npx ng build
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
