@@ -36,7 +36,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/photodrop-ng # <── replace with your actual output folder
+          path: dist/photodrop-ng/browser # <── replace with your actual output folder
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
