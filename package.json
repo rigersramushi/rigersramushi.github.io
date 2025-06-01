@@ -11,5 +11,8 @@
   "devDependencies": {
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.0.0"
+  },
+  "dependencies": {
+    "@azure/msal-browser": "^4.13.0"
   }
 }
