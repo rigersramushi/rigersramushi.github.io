@@ -3,8 +3,8 @@ name: Pages
 on:
   push:
     branches: [main]
-workflow_dispatch:
- 
+  workflow_dispatch:  # ✅ allows manual triggering from the GitHub UI
+
 permissions:
   contents: read
   pages: write
@@ -13,7 +13,6 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -31,7 +30,7 @@ jobs:
 
       - name: Build Angular PWA
         run: |
-          npx ng build --configuration production --base-href /PhotodropNg/
+          npx ng build --configuration production --base-href /rigersramushi.github.io/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
