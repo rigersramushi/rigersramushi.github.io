@@ -6,13 +6,13 @@ on:
 
 permissions:
   contents: read
-  pages: write # required
-  id-token: write # required
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    # 👇 declare the environment GitHub Pages uses
+
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Angular PWA
         run: |
-          npx ng build --configuration production --base-href /rigersramushi.github.io/
+          npx ng build --configuration production --base-href /PhotodropNg/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -38,8 +38,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/photodrop-ng/browser # <- your Angular output
+          path: dist/photodrop-ng/browser
 
       - name: Deploy to GitHub Pages
-        id: deploy # <-- give it an id so we can read page_url
+        id: deploy
         uses: actions/deploy-pages@v4
