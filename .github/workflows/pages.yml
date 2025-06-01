@@ -6,12 +6,16 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  pages: write # required
+  id-token: write # required
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # 👇 declare the environment GitHub Pages uses
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -22,21 +26,20 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci # faster & reproducible
+        run: npm ci
 
-      # 👉 Build the Angular PWA
-      - name: Build with Angular
+      - name: Build Angular PWA
         run: |
-          npx ng build --base-href /rigersramushi.github.io/
+          npx ng build --configuration production --base-href /rigersramushi.github.io/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      # 👉 Upload only the Angular build output
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/photodrop-ng/browser # <── replace with your actual output folder
+          path: dist/photodrop-ng/browser # <- your Angular output
 
       - name: Deploy to GitHub Pages
+        id: deploy # <-- give it an id so we can read page_url
         uses: actions/deploy-pages@v4
