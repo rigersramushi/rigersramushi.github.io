@@ -1,0 +1,14 @@
+<h2>Snap & Upload</h2>
+
+<select [(ngModel)]="category"> <!-- double bracket/paren syntax -->
+    <option>Client1</option>
+    <option>Client2</option>
+</select><br /><br />
+
+<input type="file" accept="image/*" capture="environment" (change)="onFile($event)" /><br /><br />
+
+<button (click)="signIn()">
+    {{ signedIn ? 'Signed in' : 'Sign in' }}
+</button>
+
+<p>{{ status }}</p>
