@@ -4,34 +4,43 @@ import { msalConfig, graphScopes } from './authConfig.js';
 const msalInstance = new PublicClientApplication(msalConfig);
 const account = () => msalInstance.getAllAccounts()[0];
 
-document.getElementById('signin').addEventListener('click', async () => {
-  await signIn();
-});
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('signin')?.addEventListener('click', async () => {
+    await signIn();
+  });
 
-document.getElementById('file').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file || !account()) return;
+  document.getElementById('file')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file || !account()) return;
 
-  const cat = document.getElementById('cat').value;
-  const name = `${new Date().toISOString().replace(/[:.]/g, '')}.jpg`;
-  const path = `/Pictures/${cat}/${name}`;
+    const cat = document.getElementById('cat').value;
+    const name = `${new Date().toISOString().replace(/[:.]/g, '')}.jpg`;
+    const path = `/Pictures/${cat}/${name}`;
 
-  try {
-    const token = await getToken();
-    const resp = await fetch(
-      `https://graph.microsoft.com/v1.0/me/drive/root:${encodeURI(path)}:/content`,
-      {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
-        body: file,
-      }
-    );
+    try {
+      const token = await getToken();
+      const resp = await fetch(
+        `https://graph.microsoft.com/v1.0/me/drive/root:${encodeURI(path)}:/content`,
+        {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}` },
+          body: file,
+        }
+      );
 
-    document.getElementById('status').textContent = resp.ok
-      ? `✔ Uploaded: ${cat}/${name}`
-      : `❌ Upload failed ${resp.status}`;
-  } catch (err) {
-    document.getElementById('status').textContent = `❌ Upload error: ${err.message}`;
+      document.getElementById('status').textContent = resp.ok
+        ? `✔ Uploaded: ${cat}/${name}`
+        : `❌ Upload failed ${resp.status}`;
+    } catch (err) {
+      document.getElementById('status').textContent = `❌ Upload error: ${err.message}`;
+    }
+  });
+
+  // ✅ Register service worker after DOM is ready
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register('./service-worker.js')
+      .catch((err) => console.error('SW registration failed:', err));
   }
 });
 
@@ -55,11 +64,4 @@ async function getToken() {
     const res = await msalInstance.acquireTokenPopup({ scopes: graphScopes });
     return res.accessToken;
   }
-}
-
-// ✅ Service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('./service-worker.js')
-    .catch((err) => console.error('SW registration failed:', err));
 }
