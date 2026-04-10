@@ -1,16 +1,162 @@
-<h2>Roof Project</h2>
+<div class="app-shell">
 
-<label>
-    Destination folder:
-    <select [(ngModel)]="selectedFolder">
-        <option *ngFor="let f of folders" [value]="f">{{ f }}</option>
-    </select>
-</label>
+  <!-- ===== Header ===== -->
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-header__icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+          <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
+        </svg>
+      </div>
+      <div class="app-header__title">
+        <span class="app-header__app-name">FotoCarica</span>
+        <span class="app-header__subtitle">Caricamento foto aziendali</span>
+      </div>
+      <!-- Auth indicator / sign-in button -->
+      <button class="btn-auth" (click)="signIn()" [class.btn-auth--signed]="signedIn">
+        <span class="btn-auth__dot" [class.btn-auth__dot--active]="signedIn"></span>
+        {{ signedIn ? 'Connesso' : 'Accedi' }}
+      </button>
+    </div>
+  </header>
 
-<input type="file" accept="image/*" (change)="onFile($event)" />
+  <!-- ===== Main content ===== -->
+  <main class="app-main">
 
-<button (click)="signIn()">
-    {{ signedIn ? 'Signed in' : 'Sign in' }}
-</button>
+    <!-- Welcome card — shown when not signed in -->
+    <section class="card hero-card" *ngIf="!signedIn">
+      <div class="hero-card__icon" aria-hidden="true">📤</div>
+      <h1 class="hero-card__title">Carica le tue foto</h1>
+      <p class="hero-card__desc">
+        Accedi con il tuo account aziendale per caricare le foto direttamente nelle cartelle OneDrive condivise.
+      </p>
+      <button class="btn btn--primary btn--large btn--full" (click)="signIn()">
+        <svg class="btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5z"/>
+        </svg>
+        Accedi con Microsoft
+      </button>
+    </section>
 
-<p>{{ status }}</p>
+    <!-- Signed-in view -->
+    <ng-container *ngIf="signedIn">
+
+      <!-- Folder selection card -->
+      <section class="card" aria-labelledby="folder-title">
+        <div class="card__header">
+          <div class="card__header-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="card__title" id="folder-title">Cartella di destinazione</h2>
+            <p class="card__subtitle">Seleziona la cartella OneDrive in cui caricare le foto</p>
+          </div>
+        </div>
+
+        <div class="select-wrapper">
+          <select class="select" [(ngModel)]="selectedFolder" aria-label="Cartella di destinazione">
+            <option *ngFor="let f of folders" [value]="f">{{ f }}</option>
+          </select>
+          <svg class="select__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7 10l5 5 5-5z"/>
+          </svg>
+        </div>
+
+        <!-- Path preview badge -->
+        <div class="folder-badge" aria-live="polite">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+          </svg>
+          <span>Percorso: <strong>OneDrive / Immagini / {{ selectedFolder }}</strong></span>
+        </div>
+      </section>
+
+      <!-- Upload actions card -->
+      <section class="card" aria-labelledby="upload-title">
+        <div class="card__header">
+          <div class="card__header-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="card__title" id="upload-title">Carica foto</h2>
+            <p class="card__subtitle">Scegli come aggiungere le immagini da caricare</p>
+          </div>
+        </div>
+
+        <div class="action-grid">
+
+          <!-- Scatta foto — opens device camera -->
+          <label class="action-card" for="input-camera">
+            <div class="action-card__icon action-card__icon--blue" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zM9 2L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+              </svg>
+            </div>
+            <span class="action-card__label">Scatta foto</span>
+            <input id="input-camera" type="file" accept="image/*" capture="environment"
+                   (change)="onFile($event)" class="visually-hidden" />
+          </label>
+
+          <!-- Carica da galleria — opens photo gallery -->
+          <label class="action-card" for="input-gallery">
+            <div class="action-card__icon action-card__icon--teal" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+              </svg>
+            </div>
+            <span class="action-card__label">Galleria</span>
+            <input id="input-gallery" type="file" accept="image/*"
+                   (change)="onFile($event)" class="visually-hidden" />
+          </label>
+
+          <!-- Carica file — opens generic file picker -->
+          <label class="action-card" for="input-file">
+            <div class="action-card__icon action-card__icon--purple" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16.5 6v11.5a4 4 0 0 1-8 0V5a2.5 2.5 0 0 1 5 0v10.5a1 1 0 0 1-2 0V6H10v9.5a2.5 2.5 0 0 0 5 0V5a4 4 0 0 0-8 0v12.5a5.5 5.5 0 0 0 11 0V6h-1.5z"/>
+              </svg>
+            </div>
+            <span class="action-card__label">File</span>
+            <input id="input-file" type="file"
+                   (change)="onFile($event)" class="visually-hidden" />
+          </label>
+
+        </div>
+      </section>
+
+      <!-- Status / feedback message -->
+      <div class="status-area" *ngIf="status" aria-live="assertive">
+        <div class="alert"
+             [class.alert--success]="status.startsWith('✔')"
+             [class.alert--error]="status.includes('❌') || status.toLowerCase().includes('error')">
+          <div class="alert__icon" aria-hidden="true">
+            <!-- Success icon -->
+            <svg *ngIf="status.startsWith('✔')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+            <!-- Error icon -->
+            <svg *ngIf="status.includes('❌') || status.toLowerCase().includes('error')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+            </svg>
+            <!-- Info / neutral icon -->
+            <svg *ngIf="!status.startsWith('✔') && !status.includes('❌') && !status.toLowerCase().includes('error')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+          </div>
+          <span class="alert__message">{{ status }}</span>
+        </div>
+      </div>
+
+    </ng-container>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="app-footer">
+    <p>Applicazione aziendale &mdash; Solo per uso interno</p>
+  </footer>
+
+</div>
