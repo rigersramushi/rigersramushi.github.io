@@ -51,12 +51,20 @@
           </div>
           <div>
             <h2 class="card__title" id="folder-title">Cartella di destinazione</h2>
-            <p class="card__subtitle">Seleziona la cartella OneDrive in cui caricare le foto</p>
+            <p class="card__subtitle">
+              {{ isLoadingFolders ? 'Caricamento cartelle da OneDrive in corso...' : 'Seleziona la cartella OneDrive in cui caricare le foto' }}
+            </p>
           </div>
         </div>
 
         <div class="select-wrapper">
-          <select class="select" [(ngModel)]="selectedFolder" aria-label="Cartella di destinazione">
+          <select
+            class="select"
+            [(ngModel)]="selectedFolder"
+            aria-label="Cartella di destinazione"
+            [disabled]="isLoadingFolders || !folders.length">
+            <option *ngIf="isLoadingFolders" value="">Caricamento cartelle...</option>
+            <option *ngIf="!isLoadingFolders && !folders.length" value="">Nessuna cartella disponibile</option>
             <option *ngFor="let f of folders" [value]="f">{{ f }}</option>
           </select>
           <svg class="select__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -108,7 +116,7 @@
                 <path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
               </svg>
             </div>
-            <span class="action-card__label">Galleria</span>
+            <span class="action-card__label">Da galleria</span>
             <input id="input-gallery" type="file" accept="image/*"
                    (change)="onFile($event)" class="visually-hidden" />
           </label>
@@ -120,11 +128,39 @@
                 <path d="M16.5 6v11.5a4 4 0 0 1-8 0V5a2.5 2.5 0 0 1 5 0v10.5a1 1 0 0 1-2 0V6H10v9.5a2.5 2.5 0 0 0 5 0V5a4 4 0 0 0-8 0v12.5a5.5 5.5 0 0 0 11 0V6h-1.5z"/>
               </svg>
             </div>
-            <span class="action-card__label">File</span>
+            <span class="action-card__label">Carica file</span>
             <input id="input-file" type="file"
                    (change)="onFile($event)" class="visually-hidden" />
           </label>
 
+        </div>
+
+        <div class="upload-panel">
+          <div class="file-summary" [class.file-summary--empty]="!selectedFileName">
+            <div class="file-summary__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm1 7V3.5L19.5 9H15z"/>
+              </svg>
+            </div>
+            <div class="file-summary__content">
+              <p class="file-summary__label">File selezionato</p>
+              <p class="file-summary__name">{{ selectedFileName || 'Nessun file selezionato' }}</p>
+              <p class="file-summary__hint">
+                {{ selectedFileName ? 'Premi il pulsante qui sotto per completare il caricamento.' : 'Scegli una foto usando uno dei pulsanti sopra.' }}
+              </p>
+            </div>
+          </div>
+
+          <button
+            class="btn btn--primary btn--large btn--full"
+            type="button"
+            (click)="uploadSelectedFile()"
+            [disabled]="!selectedFile || isUploading">
+            <svg class="btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M5 20h14v-2H5v2zm7-18l-5.5 5.5 1.42 1.42L11 6.84V16h2V6.84l3.08 3.08 1.42-1.42L12 2z"/>
+            </svg>
+            {{ isUploading ? 'Caricamento...' : 'Carica ora' }}
+          </button>
         </div>
       </section>
 

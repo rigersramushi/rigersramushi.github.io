@@ -19,6 +19,10 @@ import { msalConfig, graphScopes } from '../../authConfig';
 export class UploaderComponent implements OnInit {
   status   = '';
   signedIn = false;
+  isUploading = false;
+  isLoadingFolders = false;
+  selectedFile: File | null = null;
+  selectedFileName = '';
 
   /** -------- Folder selection -------- */
   folders: string[] = [
@@ -44,12 +48,15 @@ export class UploaderComponent implements OnInit {
     if (redir?.account) {
       this.pca.setActiveAccount(redir.account);
       this.signedIn = true;
+      await this.loadFolders();
       return;
     }
+
     const accts = this.pca.getAllAccounts();
     if (accts.length) {
       this.pca.setActiveAccount(accts[0]);
       this.signedIn = true;
+      await this.loadFolders();
     }
   }
 
@@ -64,25 +71,46 @@ export class UploaderComponent implements OnInit {
     if (acct) {
       this.pca.setActiveAccount(acct);
       this.signedIn = true;
+      await this.loadFolders();
     } else {
-      this.status = '❌ Login failed – no account returned.';
+      this.status = '❌ Accesso non riuscito: nessun account disponibile.';
     }
   }
 
   /* ---------- upload ---------- */
 
   async onFile(evt: Event): Promise<void> {
+    const input = evt.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    this.selectedFile = file;
+    this.selectedFileName = file.name;
+    this.status = `File selezionato: ${file.name}. Premi "Carica ora" per continuare.`;
+  }
+
+  async uploadSelectedFile(): Promise<void> {
     await this.ready;
 
-    const input = evt.target as HTMLInputElement;
-    const file  = input.files?.[0];
-    if (!file || !this.account) {
-      this.status = '❌ Please sign in before uploading.';
+    const file = this.selectedFile;
+    if (!file) {
+      this.status = '❌ Seleziona prima una foto o un file.';
+      return;
+    }
+
+    if (!this.account) {
+      this.status = '❌ Accedi prima di caricare un file.';
       return;
     }
 
     const name     = new Date().toISOString().replace(/[:.]/g, '') + '.png';
-    const fullPath = `/Pictures/${this.selectedFolder}/${name}`;  // ← folder from dropdown
+    const fullPath = `/Pictures/${this.selectedFolder}/${name}`;
+
+    this.isUploading = true;
+    this.status = 'Caricamento in corso...';
 
     try {
       const token = await this.getToken();
@@ -103,13 +131,63 @@ export class UploaderComponent implements OnInit {
         const txt = await resp.text();
         throw new Error(`${resp.status}: ${txt}`);
       }
-      this.status = `✔ Uploaded ${name} to ${this.selectedFolder}`;
+
+      this.status = `✔ File caricato in ${this.selectedFolder}: ${name}`;
+      this.selectedFile = null;
+      this.selectedFileName = '';
     } catch (err: any) {
-      this.status = `Error: ${err.message}`;
+      this.status = `❌ Errore durante il caricamento: ${err.message}`;
+    } finally {
+      this.isUploading = false;
     }
   }
 
   /* ---------- helpers ---------- */
+
+  private async loadFolders(): Promise<void> {
+    if (!this.account) {
+      return;
+    }
+
+    this.isLoadingFolders = true;
+
+    try {
+      const token = await this.getToken();
+      const resp = await fetch(
+        'https://graph.microsoft.com/v1.0/me/drive/root:/Pictures:/children?$select=name,folder',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`${resp.status}: ${txt}`);
+      }
+
+      const data = await resp.json();
+      const folderNames = (data.value ?? [])
+        .filter((item: any) => !!item.folder)
+        .map((item: any) => item.name)
+        .filter((name: string) => !!name);
+
+      if (folderNames.length) {
+        this.folders = folderNames;
+        if (!this.folders.includes(this.selectedFolder)) {
+          this.selectedFolder = this.folders[0];
+        }
+        this.status = '✔ Cartelle caricate automaticamente da OneDrive.';
+      } else {
+        this.status = '⚠️ Nessuna sottocartella trovata in OneDrive / Immagini.';
+      }
+    } catch (err: any) {
+      this.status = `⚠️ Impossibile caricare dinamicamente le cartelle: ${err.message}`;
+    } finally {
+      this.isLoadingFolders = false;
+    }
+  }
 
   private async getToken(): Promise<string> {
     await this.ready;

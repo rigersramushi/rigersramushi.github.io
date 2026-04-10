@@ -1,6 +1,3 @@
-/* ============================================================
-   CSS Custom Properties  —  Fluent / Microsoft-inspired palette
-   ============================================================ */
 :host {
   --color-primary:        #0078d4;
   --color-primary-hover:  #106ebe;
@@ -266,6 +263,14 @@
 
 .btn__icon { width: 20px; height: 20px; flex-shrink: 0; }
 
+.btn:disabled {
+  background: #c8c6c4;
+  color: #605e5c;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
 /* ============================================================
    Folder select
    ============================================================ */
@@ -383,6 +388,70 @@
   border: 0;
 }
 
+.upload-panel {
+  margin-top: var(--sp-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+}
+
+.file-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: #f8f9fb;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.file-summary--empty {
+  background: #fbfbfb;
+}
+
+.file-summary__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #e1effa;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.file-summary__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.file-summary__content {
+  min-width: 0;
+}
+
+.file-summary__label {
+  font-size: .76rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.file-summary__name {
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+  word-break: break-word;
+  margin-bottom: 4px;
+}
+
+.file-summary__hint {
+  font-size: .8rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
 /* ============================================================
    Status / feedback alerts
    ============================================================ */
@@ -435,9 +504,6 @@
   border-top: 1px solid var(--color-border);
 }
 
-/* ============================================================
-   Responsive — tablet / desktop
-   ============================================================ */
 @media (min-width: 480px) {
   .app-main {
     padding-left: var(--sp-lg);
