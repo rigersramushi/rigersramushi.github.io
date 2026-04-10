@@ -76,6 +76,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.app-header__logo {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .app-header__title {

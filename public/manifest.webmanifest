@@ -1,10 +1,19 @@
 {
-  "name": "photodrop-ng",
-  "short_name": "photodrop-ng",
+  "name": "FotoCarica Aziendale",
+  "short_name": "FotoCarica",
+  "description": "App aziendale per scattare e caricare foto nelle cartelle OneDrive.",
+  "theme_color": "#0078d4",
+  "background_color": "#f3f2f1",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
   "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
     {
       "src": "icons/icon-72x72.png",
       "sizes": "72x72",

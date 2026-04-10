@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.css']
 })
 export class App {
-  protected title = 'photodrop-ng';
+  protected title = 'FotoCarica Aziendale';
 }

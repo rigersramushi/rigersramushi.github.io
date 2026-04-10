@@ -4,13 +4,11 @@
   <header class="app-header">
     <div class="app-header__inner">
       <div class="app-header__icon" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-          <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
-        </svg>
+        <img class="app-header__logo" src="logo.svg" alt="Logo FotoCarica Aziendale">
       </div>
       <div class="app-header__title">
-        <span class="app-header__app-name">FotoCarica</span>
-        <span class="app-header__subtitle">Caricamento foto aziendali</span>
+        <span class="app-header__app-name">FotoCarica Aziendale</span>
+        <span class="app-header__subtitle">Upload foto su OneDrive</span>
       </div>
       <!-- Auth indicator / sign-in button -->
       <button class="btn-auth" (click)="signIn()" [class.btn-auth--signed]="signedIn">
